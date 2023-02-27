@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:tidal_redesign/database.dart';
-import 'package:tidal_redesign/screens/ShareScreen.dart';
+import 'package:tidal_redesign/screens/Home.dart';
 import 'package:lottie/lottie.dart';
 
 class MusicPlayer extends StatefulWidget {

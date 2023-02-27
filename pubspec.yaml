@@ -45,9 +45,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   get: ^4.6.5
-  just_audio: ^0.9.28
   rxdart: ^0.27.5
   lottie: ^2.2.0
+  just_audio: ^0.9.31
+  on_audio_query: ^2.6.1
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +61,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  babstrap_settings_screen: ^0.1.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -70,6 +73,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  
   
   assets:
     - assets/images/
