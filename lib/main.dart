@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:tidal_redesign/color_constant.dart';
-import 'package:tidal_redesign/screens/DownloadsScreen.dart';
+import 'package:tidal_redesign/screens/PlaylistScreen.dart';
 import 'package:tidal_redesign/screens/FavoritesScreen.dart';
-import 'package:tidal_redesign/screens/ShareScreen.dart';
+import 'package:tidal_redesign/screens/Home.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:tidal_redesign/screens/settings.dart';
 
@@ -37,12 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final navigationKey = GlobalKey<CurvedNavigationBarState>();
   int index = 0;
 
-  final screens = [
-    ShareScreen(),
-    FavoriteScreen(),
-    DownloadsScreen(),
-    SettingScreen()
-  ];
+  final screens = [Home(), FavoriteScreen(), PlaylistScreen(), SettingScreen()];
 
   final ScrollController scrollController = ScrollController();
 
@@ -75,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 GButton(
                   icon: Icons.playlist_add_circle_rounded,
-                  text: 'search',
+                  text: 'playlist',
                 ),
                 GButton(
                   icon: Icons.settings,
