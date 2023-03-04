@@ -1,10 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PlayerController extends GetxController {
   final audioQuery = OnAudioQuery();
+  final audioPlayer = AudioPlayer();
+
+  var playIndex = 0.obs;
+  var isPlaying = false.obs;
 
   @override
   void onInit() {
@@ -13,15 +18,30 @@ class PlayerController extends GetxController {
     checkPermission();
   }
 
+  playSong(String? uri, index) {
+    playIndex.value = index;
+    try {
+      audioPlayer.setAudioSource(
+        AudioSource.uri(
+          Uri.parse(uri!),
+        ),
+      );
+      audioPlayer.play();
+      isPlaying(true);
+    } on Exception catch (e) {
+      print(e.toString());
+    }
+  }
+
   checkPermission() async {
     var perm = await Permission.storage.request();
 
     if (perm.isGranted) {
-      return audioQuery.querySongs(
-          ignoreCase: true,
-          orderType: OrderType.ASC_OR_SMALLER,
-          sortType: null,
-          uriType: UriType.EXTERNAL);
+      // return audioQuery.querySongs(
+      //     ignoreCase: true,
+      //     orderType: OrderType.ASC_OR_SMALLER,
+      //     sortType: null,
+      //     uriType: UriType.EXTERNAL);
     } else {
       checkPermission();
     }
