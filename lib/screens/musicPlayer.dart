@@ -7,7 +7,7 @@ import 'package:lottie/lottie.dart';
 
 class MusicPlayer extends StatefulWidget {
   final Song song;
-  MusicPlayer(this.song);
+  const MusicPlayer(this.song);
 
   @override
   State<MusicPlayer> createState() => _MusicPlayerState();
@@ -90,11 +90,26 @@ class _MusicPlayerState extends State<MusicPlayer> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          height: 300,
-                          width: 500,
-                          child: Lottie.network(
-                              'https://assets6.lottiefiles.com/private_files/lf30_fzgzqgfe.json'),
+                        // SizedBox(
+                        //   height: 300,
+                        //   width: 500,
+                        //   child: Lottie.network(
+                        //       'https://assets6.lottiefiles.com/private_files/lf30_fzgzqgfe.json'),
+                        // ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                  color: Colors.red, shape: BoxShape.circle),
+                              alignment: Alignment.center,
+                              child: Icon(
+                                Icons.music_note,
+                                size: 48,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
                         Padding(
                           padding:

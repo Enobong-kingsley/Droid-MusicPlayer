@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:get/get.dart';
 import 'package:glassmorphism/glassmorphism.dart';
+import 'package:on_audio_query/on_audio_query.dart';
+import 'package:tidal_redesign/controllers/player_controller.dart';
 import 'package:tidal_redesign/database.dart';
-import 'package:tidal_redesign/glassmorphism.dart';
 import 'package:tidal_redesign/color_constant.dart';
+import 'package:tidal_redesign/screens/Home.dart';
+import 'package:tidal_redesign/screens/musicPlayer.dart';
+import 'package:flutter/src/widgets/framework.dart';
 
 class PlaylistScreen extends StatelessWidget {
   const PlaylistScreen({super.key});
@@ -28,13 +31,13 @@ class PlaylistScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
-              children: const [
+              children: [
                 _PlaylistInformation(),
                 SizedBox(
                   height: 30,
                 ),
                 _PlayOrShuffleSwitch(),
-                _PlaylistSongs(),
+                _PlaylistSongs(currentSong),
               ],
             ),
           ),
@@ -44,43 +47,135 @@ class PlaylistScreen extends StatelessWidget {
   }
 }
 
-class _PlaylistSongs extends StatelessWidget {
-  const _PlaylistSongs({
-    Key? key,
-  }) : super(key: key);
+class _PlaylistSongs extends StatefulWidget {
+  // _PlaylistSongs({
+  //   Key? key,
+  // }) : super(key: key);
+  final Song song;
+  _PlaylistSongs(this.song);
+
+  @override
+  State<_PlaylistSongs> createState() => _PlaylistSongsState();
+}
+
+class _PlaylistSongsState extends State<_PlaylistSongs> {
+  var controller = Get.put(PlayerController());
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: mostPopular.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: Text(
-              '${index + 1}',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium!
-                  .copyWith(fontWeight: FontWeight.bold, color: Colors.white),
-            ),
-            title: Text(
-              mostPopular[index].name,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium!
-                  .copyWith(fontWeight: FontWeight.bold, color: Colors.white),
-            ),
-            subtitle: Text(
-              '${mostPopular[index].singer} ~ 02:45',
-              style: TextStyle(color: Colors.white),
-            ),
-            trailing: const Icon(
-              Icons.more_vert,
-              color: Colors.white,
+    return FutureBuilder<List<SongModel>>(
+      future: controller.audioQuery.querySongs(
+          ignoreCase: true,
+          orderType: OrderType.ASC_OR_SMALLER,
+          sortType: null,
+          uriType: UriType.EXTERNAL),
+      builder: (BuildContext context, snapshot) {
+        if (snapshot.data == null) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.data!.isEmpty) {
+          print(snapshot.data);
+          return Center(
+            child: Text(
+              "No Song Found",
+              style: TextStyle(fontSize: 40),
             ),
           );
-        });
+        } else {
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              return Obx(
+                () => ListTile(
+                  leading: QueryArtworkWidget(
+                    id: snapshot.data![index].id,
+                    type: ArtworkType.AUDIO,
+                    nullArtworkWidget: const Icon(
+                      Icons.music_note,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                  ),
+                  //  Text(
+                  //   '${index + 1}',
+                  //   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  //       fontWeight: FontWeight.bold, color: Colors.white),
+                  // ),
+                  title: Text(
+                    snapshot.data![index].displayNameWOExt,
+                    // mostPopular[index].name,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  subtitle: Text(
+                    "${snapshot.data![index].artist}",
+                    // '${mostPopular[index].singer} ~ 02:45',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  trailing: controller.playIndex.value == index &&
+                          controller.isPlaying.value
+                      ? SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: Blob(
+                            color: ColorConstants.kPrimaryColor,
+                          ),
+                        )
+                      // Icon(
+                      //     Icons.play_circle,
+                      //     color: Colors.white,
+                      //     size: 26,
+                      //   )
+                      : null,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, _, __) =>
+                            MusicPlayer(widget.song),
+                      ),
+                    );
+                    // Get.to(() => MusicPlayer(song));
+                    controller.playSong(snapshot.data![index].uri, index);
+                  },
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+}
+
+class Blob extends StatelessWidget {
+  final double rotation;
+  final double scale;
+  final Color color;
+
+  const Blob({required this.color, this.rotation = 0, this.scale = 1})
+      : assert(color != null);
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.scale(
+      scale: scale,
+      child: Transform.rotate(
+        angle: rotation,
+        child: Container(
+          decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(32),
+                  topRight: Radius.circular(50),
+                  bottomLeft: Radius.circular(42),
+                  bottomRight: Radius.circular(37))),
+        ),
+      ),
+    );
   }
 }
 
