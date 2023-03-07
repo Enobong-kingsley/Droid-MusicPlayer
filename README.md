@@ -1,5 +1,6 @@
 # Droid-MusicPlayer
 
+Note: This app has not been updated to recent 
 A new Flutter project for listening your cool music
 
 ## Getting Started
